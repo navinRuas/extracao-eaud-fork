@@ -11,7 +11,7 @@ e retorna dataframe com dados sintetizados dos monitoramentos ativos.
 
 import keyring
 import pandas as pd
-from modules.funcoes import conecta_consulta_monit, consulta_duracao_monit
+from modules.funcoes import conecta_consulta_monit, consulta_duracao_tarefa
 
 #--- Entradas ---#
 chave = keyring.get_password('API_EAUD', 'audin_2023')
@@ -40,9 +40,11 @@ periodo_realizacao = pd.DataFrame(columns=['dataRealizadaInicio', 'dataRealizada
 
 #loop que coleta informações de duração dos monitoramentos ativos
 for i, data  in monitoramentos_ativos.iterrows():
-    periodo_moni_interacao = consulta_duracao_monit(i, chave)
+    periodo_moni_interacao = consulta_duracao_tarefa(i, chave)
     #print(i)
     periodo_realizacao = periodo_realizacao.append(periodo_moni_interacao)
 
 #mescla informações de duração com outros dados dos monitoramentos ativos    
 resumo_monitoramentos = periodo_realizacao.join(monitoramentos_ativos)
+
+resumo_monitoramentos.to_excel('excel_df.xlsx')
