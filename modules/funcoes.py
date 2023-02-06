@@ -25,7 +25,7 @@ def conecta_API(chave, url, params):
 
     except Exception as e:
         logging.error('Ocorreu erro de conexão com a API' + str(e))
-        quit()
+        SystemExit()
         
     print ('funciona')
     return response_json
