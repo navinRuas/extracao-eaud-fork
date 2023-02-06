@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Feb  2 15:33:35 2023
-
-@author: taina.esteves
-"""
 import keyring
 #import requests
 #import json

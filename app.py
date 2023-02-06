@@ -8,7 +8,6 @@ e retorna dataframe com dados sintetizados dos monitoramentos ativos.
 @author: taina.esteves
 """
 
-
 import keyring
 import pandas as pd
 from modules.funcoes import conecta_consulta_monit, consulta_duracao_tarefa

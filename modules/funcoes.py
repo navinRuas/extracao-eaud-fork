@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jan 25 17:32:38 2023
-
-Contém funções que extraem dados de monitoramento e interações de tarefas do e-aud.
-
-
-@author: taina.esteves
-"""
 import requests
 import json
 import pandas as pd
@@ -54,55 +45,24 @@ def coleta_params_idtarefa (idTarefa):
     params_coleta_idtarefa = {
         id: idTarefa
     }    
-    
     return params_coleta_idtarefa
-    
-    
+     
 #--- Função para conexão da API e consulta de detalhes de duração da tarefa ---#
-"""def consulta_duracao_tarefa(idTarefa: int, chave):
-    
-    #dados para conexão API
-    url_duracao ="https://eaud.cgu.gov.br/api/auth/tarefa/"+str(idTarefa)+"/periodo-realizacao"
-    params_coleta_idtarefa = coleta_params_idtarefa(idTarefa)
-
-    response_json = conecta_API(chave, url_duracao, params_coleta_idtarefa)
-    
-    df_tarefas = pd.DataFrame(response_json, index=[idTarefa])
-    df_tarefas[['dataRealizadaInicio', 'dataRealizadaFim']] = df_tarefas[['dataRealizadaInicio', 'dataRealizadaFim']].apply(pd.to_datetime)
-
-    return df_tarefas
-"""
-
-#versão da função que funciona
 def consulta_duracao_tarefa(idTarefa: int, chave):
     
     #dados para conexão API
     url_duracao ="https://eaud.cgu.gov.br/api/auth/tarefa/"+str(idTarefa)+"/periodo-realizacao"
     params_coleta_monitoramento = coleta_params_idtarefa(idTarefa)
-    
-    try:
-        headers = {'chave-api':chave}
-    
-        response_API = requests.get(url=url_duracao, headers=headers, params=params_coleta_monitoramento)
-        #print(response_API.status_code)
-        response_json = json.loads(response_API.text)
-        df_tarefas = pd.DataFrame(response_json, index=[idTarefa])
-        df_tarefas[['dataRealizadaInicio', 'dataRealizadaFim']] = df_tarefas[['dataRealizadaInicio', 'dataRealizadaFim']].apply(pd.to_datetime)
 
-        if response_API.status_code != 200:
-            logging.info('Erro na execução da API que busca lista de monitoramentos, URL = '+url_duracao)
-            return []
-    
-        if df_tarefas.empty:
-            logging.info('Não há monitoramentos compatíveis com os filtros aplicados')
-            return []
+    headers = {'chave-api':chave}
 
-    except Exception as e:
-        logging.error(' Ocorreu erro ao buscar lista de auditorias, por API' + str(e))
-        quit()
+    response_API = requests.get(url=url_duracao,headers=headers, params=params_coleta_monitoramento)
+    response_json = json.loads(response_API.text)
     
-    return df_tarefas"""
+    df_tarefas = pd.DataFrame(response_json, index=[idTarefa])
+    df_tarefas[['dataRealizadaInicio', 'dataRealizadaFim']] = df_tarefas[['dataRealizadaInicio', 'dataRealizadaFim']].apply(pd.to_datetime)
 
+    return df_tarefas
 
 #--- define parametro de coleta de informaçoes de interacoes da tarefa ---#
 def coleta_params_interacao (idTarefa):
