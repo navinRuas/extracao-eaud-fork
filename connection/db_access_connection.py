@@ -5,26 +5,32 @@ Created on Mon Jan 30 15:27:27 2023
 @author: taina.esteves
 """
 
-import pyodbc 
-import pandas as pd
+#import pandas as pd
+from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
+import logging
+#import pymysql
+#import mysql.connector
+#from mysql.connector import errorcode
 
-connection_string = (
-    r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
-    r'DBQ=C:\Users\Public\MyTest.accdb;'
-)
-cnxn = pyodbc.connect(connection_string, autocommit=True)
-crsr = cnxn.cursor()
 
-# prepare test environment
-table_name = "monitoramento"
-if list(crsr.tables(table_name)):
-    crsr.execute(f"DROP TABLE [{table_name}]")
-crsr.execute(f"CREATE TABLE [{table_name}] (ID COUNTER PRIMARY KEY, employee_id TEXT(25))")
+def write_df_into_table(database, df, tabela):
+    
+ 
+    user =  'auditor'
+    pwd =  '4ud1t0r'
+    hostname = 'auditordb.inep.gov.br'
+           
+    engine = create_engine("mariadb+pymysql://{user}:{pwd}@{host}/{db}".format(host=hostname, db=database, user=user, pwd=pwd))
 
-# test data
-df = pd.DataFrame([[1, 'employee1'], [2, 'employee2']], columns=['ID', 'employee_id'])
+    try:
+        engine.connect()
+        
+    except SQLAlchemyError as err:
+        logging.info("error", err.__cause__)  # this will give what kind of error
+        
+    else:
+        logging.info("Conexão no DB realizada com sucesso")    
+        df.to_sql(name=tabela, con=engine, if_exists='replace', index=True)
+            
 
-# insert the rows from the DataFrame into the Access table    
-crsr.executemany(
-    f"INSERT INTO [{table_name}] (ID, employee_id) VALUES (?, ?)",
-    df.itertuples(index=False))
